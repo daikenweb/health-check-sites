@@ -17,14 +17,14 @@ const send2Slack = async text => fetch(webhookurl, {
 export const healthCheckSites = async () => {
   await send2Slack(`health-check-sites: On invoked, I show targets list
 ${targets.join('\n')}`)
-  await Promise.all(targets.map(async (target) => {// 全てのURLに対して
+  for (const target of targets) { // 全てのURLに対して
     const controller = new AbortController()
     const signal = controller.signal
     const promise = fetch(target, { signal }).catch(e => // GETを送信して問題があれば
       send2Slack(`<!here> Error: url; ${target} detail; ${e}`) // slackに通知する
     )
     setTimeout(() => controller.abort(), 11000)
-    return promise
-  }))
-  return {success: true}
+    await promise
+  }
+  return { success: true }
 }
