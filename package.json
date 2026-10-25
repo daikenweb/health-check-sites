@@ -13,5 +13,8 @@
     },
     "scripts": {
         "test": "jest"
+    },
+    "engines": {
+        "node": ">=24.22.1 <25"
     }
 }

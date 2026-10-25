@@ -2,9 +2,12 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      nodejs: 24
     commands:
+      - n 24.22.1
       # Install all dependencies (including dependencies for running tests)
-      - npm install
+      - npm ci
   pre_build:
     commands:
       # Discover and run unit tests in the '__tests__' directory

@@ -31,7 +31,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: A Lambda function that logs the payload of messages sent to an associated SQS queue.
-      Runtime: nodejs14.x
+      Runtime: nodejs24.x
       Architectures:
         - x86_64
       Handler: src/handlers/health-check-sites.healthCheckSites

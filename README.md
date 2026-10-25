@@ -44,7 +44,7 @@ The AWS SAM CLI is an extension of the AWS CLI that adds functionality for build
 To use the AWS SAM CLI, you need the following tools:
 
 * AWS SAM CLI - [Install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html).
-* Node.js - [Install Node.js 14](https://nodejs.org/en/), including the npm package management tool.
+* Node.js - [Install Node.js 24.22.1](https://nodejs.org/en/), including the npm package management tool.
 * Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community).
 
 To build and deploy your application for the first time, run the following in your shell:
@@ -94,7 +94,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/scheduled-event-logger.scheduledEventLogger
-      Runtime: nodejs14.x
+      Runtime: nodejs24.x
       DeadLetterQueue:
         Type: SQS
         TargetArn: !GetAtt MyQueue.Arn
@@ -149,3 +149,11 @@ aws cloudformation delete-stack --stack-name health-check-sites
 For an introduction to the AWS SAM specification, the AWS SAM CLI, and serverless application concepts, see the [AWS SAM Developer Guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html).
 
 Next, you can use the AWS Serverless Application Repository to deploy ready-to-use apps that go beyond Hello World samples and learn how authors developed their applications. For more information, see the [AWS Serverless Application Repository main page](https://aws.amazon.com/serverless/serverlessrepo/) and the [AWS Serverless Application Repository Developer Guide](https://docs.aws.amazon.com/serverlessrepo/latest/devguide/what-is-serverlessrepo.html).
+
+## Node.js runtime
+
+Use `nvm install && nvm use` to select Node.js 24.22.1 (latest 24.x verified on 2026-10-25), which fixes CVE-2026-111497. Package engines accept patched 24.x releases only.
+
+Lambda templates use `nodejs24.x`; AWS controls the managed runtime patch level. Verify the deployed runtime patch during a separately approved release.
+
+Reference: https://nodejs.org/en/blog/vulnerability/october-2026-security-releases
