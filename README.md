@@ -129,12 +129,22 @@ You can find more information and examples about filtering Lambda function logs 
 
 ## Unit tests
 
-Tests are defined in the `__tests__` folder in this project. Use `npm` to install the [Jest test framework](https://jestjs.io/) and run unit tests.
+Tests are defined in the `__tests__` folder in this project. They cover successful health checks, request failures, and timeout notifications without contacting external sites or Slack. Use npm 11.10.0 or newer to install dependencies and run the [Jest test framework](https://jestjs.io/).
 
 ```bash
-my-application$ npm install
+my-application$ npm ci
 my-application$ npm run test
 ```
+
+The project's `.npmrc` sets `min-release-age=3`: dependency resolution only selects versions published more than three days ago, including transitive dependencies. Keep `package-lock.json` committed so CI installs the reviewed versions.
+
+To apply the same default to all projects for your user (including across nvm Node.js versions):
+
+```bash
+npm config set min-release-age 3 --location=user
+```
+
+This writes to `~/.npmrc`. npm also supports `--location=global`, but that configuration belongs to the active npm installation prefix. Project, environment, or command-line settings can override these defaults. See the [npm configuration documentation](https://docs.npmjs.com/cli/using-npm/config/#min-release-age).
 
 ## Cleanup
 
