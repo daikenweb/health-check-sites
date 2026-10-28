@@ -5,9 +5,10 @@ AWS SAMで管理されるcron式で実行されるLambda functoinのアプリケ
 template.yamlにcron式が定義されています。
 Lambda Functionの本体はsrc/handlers/health-check-sites.jsです。
 
-環境変数はTARGETSとWEBHOOK_URLの二つです。
+環境変数はTARGETSとWEBHOOK_SECRET_ARNの二つです。
 TARGETSにカンマ区切りの検証対象URLを入れます。
-WEBHOOK_URLにslackのWEBHOOK URLを入れます。
+WEBHOOK_SECRET_ARNには Slack Webhook URL を保存した Secrets Manager シークレットの ARN を入れます。
+Webhook URL 自体は Lambda の環境変数に保存しません。
 
 # SAM Information
 

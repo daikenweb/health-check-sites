@@ -16,15 +16,20 @@ Parameters:
   WebhookUrl:
     Type: String
     Description: Slack web hook url
-    Default: localhost
+    NoEcho: true
   Targets:
     Type: CommaDelimitedList
     Description: Target sites list
-    Default: https://google.com,https://yahoo.co.jp
 
 # Resources declares the AWS resources that you want to include in the stack
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 Resources:  
+  SlackWebhookSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: Slack Incoming Webhook URL for health-check-sites
+      SecretString: !Ref WebhookUrl
+
   # This is the Lambda function definition associated with the source code: sqs-payload-logger.js. For all available properties, see
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
   HealthCheckSites:
@@ -40,7 +45,7 @@ Resources:
       # This example runs every hour.
       Environment:
         Variables:
-          WEBHOOK_URL: !Ref WebhookUrl
+          WEBHOOK_SECRET_ARN: !Ref SlackWebhookSecret
           TARGETS: !Join
             - ','
             - !Ref Targets
@@ -50,4 +55,8 @@ Resources:
           Properties:
             Schedule: cron(0 22 * * ? *)
       MemorySize: 128
-      Timeout: 15
+      # The health checks run in parallel, but the observed execution time can exceed 15 seconds.
+      Timeout: 240
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref SlackWebhookSecret

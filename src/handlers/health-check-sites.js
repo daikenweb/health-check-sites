@@ -4,12 +4,30 @@ import { AbortController } from 'node-abort-controller'
 //! TARGETSはカンマ区切りの検証対象URL
 const targets = process.env.TARGETS.split(',')
 //! WEBHOOK_URLはSlackのWebhook URL
-const webhookurl = process.env.WEBHOOK_URL
+let webhookurl = process.env.WEBHOOK_URL
 
-const send2Slack = async text => fetch(webhookurl, {
-  method: 'post',
-  body: JSON.stringify({ text })
-})
+const getWebhookUrl = async () => {
+  if (webhookurl) return webhookurl
+
+  const secretArn = process.env.WEBHOOK_SECRET_ARN
+  if (!secretArn) throw new Error('WEBHOOK_SECRET_ARN is required')
+
+  const { SecretsManagerClient, GetSecretValueCommand } = await import('@aws-sdk/client-secrets-manager')
+  const client = new SecretsManagerClient()
+  const { SecretString } = await client.send(new GetSecretValueCommand({ SecretId: secretArn }))
+  if (!SecretString) throw new Error('Slack webhook secret is empty')
+
+  webhookurl = SecretString
+  return webhookurl
+}
+
+const send2Slack = async text => {
+  const webhookUrl = await getWebhookUrl()
+  return fetch(webhookUrl, {
+    method: 'post',
+    body: JSON.stringify({ text })
+  })
+}
 
 /**
  * A Lambda function that check health of some sites
